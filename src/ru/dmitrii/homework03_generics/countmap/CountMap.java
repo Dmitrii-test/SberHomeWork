@@ -2,29 +2,29 @@ package ru.dmitrii.homework03_generics.countmap;
 
 import java.util.Map;
 
-public interface CountMap <T, K extends Integer> {
+public interface CountMap <K, B extends Integer> {
 
     // добавляет элемент в этот контейнер.
-    void add(T t);
+    void add(K k);
 
     //Возвращает количество добавлений данного элемента
-    int getCount(T t);
+    int getCount(K k);
 
     //Удаляет элемент и контейнера и возвращает количество его добавлений(до удаления)
-    int remove(T t);
+    int remove(K k);
 
     //количество разных элементов
     int size();
 
     /*Добавить все элементы из source в текущий контейнер,
      при совпадении ключей,     суммировать значения */
-    void addAll(CountMap<? extends T, K> source);
+    void addAll(CountMap<? extends K, B> source);
 
     /*Вернуть java.util.Map. ключ - добавленный элемент,
       значение - количество его добавлений */
-    Map<T, K> toMap();
+    Map<K, B> toMap();
 
     //Тот же самый контракт как и toMap(), только всю информацию записать в destination
-    void toMap(Map<? super T, K> destination);
+    void toMap(Map<? super K, B> destination);
 
 }

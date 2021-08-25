@@ -3,23 +3,23 @@ package ru.dmitrii.homework03_generics.countmap;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CountMapImpl<T, K extends Integer> implements CountMap<T, Integer> {
+public class CountMapImpl<K> implements CountMap<K, Integer> {
 
-    private Map<T, Integer> map = new HashMap<>();
+    Map <K,Integer> map = new HashMap<>();
 
     @Override
-    public void add(T t) {
-        map.merge(t, 1, Integer::sum);
+    public void add(K k) {
+        map.merge(k, 1, Integer::sum);
     }
 
     @Override
-    public int getCount(T t) {
-        return map.getOrDefault(t, 0);
+    public int getCount(K k) {
+        return map.getOrDefault(k, 0);
     }
 
     @Override
-    public int remove(T t) {
-        return map.remove(t);
+    public int remove(K k) {
+        return map.remove(k);
     }
 
     @Override
@@ -28,19 +28,19 @@ public class CountMapImpl<T, K extends Integer> implements CountMap<T, Integer> 
     }
 
     @Override
-    public void addAll(CountMap<? extends T, Integer> source) {
-        for (T t : source.toMap().keySet()) {
-            map.merge(t, 1, Integer::sum);
+    public void addAll(CountMap<? extends K, Integer> source) {
+        for (K k : source.toMap().keySet()) {
+            map.merge(k, 1, Integer::sum);
         }
     }
 
     @Override
-    public Map<T, Integer> toMap() {
+    public Map<K, Integer> toMap() {
         return  map;
     }
 
     @Override
-    public void toMap(Map<? super T, Integer> destination) {
+    public void toMap(Map<? super K, Integer> destination) {
         destination.putAll(map);
     }
 
