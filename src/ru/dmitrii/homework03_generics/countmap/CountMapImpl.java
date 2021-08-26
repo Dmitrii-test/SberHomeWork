@@ -41,6 +41,7 @@ public class CountMapImpl<K> implements CountMap<K, Integer> {
 
     @Override
     public void toMap(Map<? super K, Integer> destination) {
+        destination.clear();
         destination.putAll(map);
     }
 
