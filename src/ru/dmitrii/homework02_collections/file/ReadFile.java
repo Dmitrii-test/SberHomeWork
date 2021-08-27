@@ -13,16 +13,12 @@ public class ReadFile {
         String FileName = "C:\\1.txt";
         // Множество номеров строк
         List<Integer> numbers = new ArrayList<>();
-        //Создаем мапу с сортировкой по своему Компаратору
-        Map<String, Integer> map = new TreeMap<>(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                int result = o1.length() - o2.length();
 
-                if (result == 0) result = o1.compareTo(o2);
-                return result;
-            }
-        });
+        //Создаем мапу с сортировкой по своему Компаратору
+        Map<String, Integer> map = new TreeMap<>(Comparator
+                .comparingInt(String::length)
+                .thenComparing(Comparator.naturalOrder()));
+
         //Получаем имя файла
         FileName = getFilePath(FileName);
 
@@ -71,7 +67,7 @@ public class ReadFile {
     }
 
     /**
-     * В try catch resourse получаем номара строк
+     * В try-with-resources получаем номера строк
      */
     private static void readerNumber(int stringsListSize, List<Integer> numbers) {
         try (BufferedReader readerNumber = new BufferedReader(new InputStreamReader(System.in))) {
@@ -84,7 +80,7 @@ public class ReadFile {
                     if (tmp > stringsListSize - 1 || tmp <= 0) System.out.println("Нет такого номера строки");
                     else numbers.add(tmp);
                 } catch (NumberFormatException e) {
-                    System.out.println("Не правильно введена цифра" + e);
+                    System.out.println("Не правильно введена цифра");
                 }
             }
         } catch (IOException e) {
@@ -94,7 +90,7 @@ public class ReadFile {
     }
 
     /**
-     * В try catch resourse получаем имя файла и пути
+     * Получаем имя файла и пути
      */
     private static String getFilePath(String fileName) {
         BufferedReader readerFile = new BufferedReader(new InputStreamReader(System.in));

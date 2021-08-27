@@ -17,6 +17,7 @@ public class Main {
                 new Car("Тойота", "кроссовер")
         };
         Map<String, List<String>> mapCar = new HashMap<>();
+        // Через стрим заполняем мапу
         Arrays.stream(arrayCars).forEach(car -> {
             if (!mapCar.containsKey(car.getType())) {
                 List<String> value = new ArrayList<>();
