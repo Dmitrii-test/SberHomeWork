@@ -52,7 +52,7 @@ public class CountMapImpl<K> implements CountMap<K, Integer> {
         map.add(5);
         map.add(5);
         map.add(10);
-        System.out.println("Удалил элемент 5 count был = " + map.remove(5));
+        System.out.println("Удалил элемент 5, count был = " + map.remove(5));
         System.out.println("Осталось элементов 5 - " + map.getCount(5)); // 2
         System.out.println("Осталось элементов 10 - " + map.getCount(10)); // 3
         System.out.println( "Размер: " + map.size());
@@ -60,7 +60,7 @@ public class CountMapImpl<K> implements CountMap<K, Integer> {
         map.add(10);
         map.add(10);
         map.addAll(map2);
-        System.out.println("После добавления 10 стало = " + map.getCount(10));
+        System.out.println("После добавления 10 count стал = " + map.getCount(10));
         Map<Number,Integer> map3 = new HashMap<>();
         map.toMap(map3);
         System.out.println("В новой мапе 10 - " + map3.get(10));

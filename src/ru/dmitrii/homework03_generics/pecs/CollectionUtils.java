@@ -4,66 +4,136 @@ import java.util.*;
 
 public class CollectionUtils {
 
-    //вернуть новый лист
+    /**
+     * Вернуть новый лист
+     */
     public static <T> List<T> newArrayList() {
         return new ArrayList<T>();
     }
 
-    // ернуть индекс элемента
-    public static <T> int indexOf(List<? extends T> source, T t) {
+    /**
+     * Вернуть индекс элемента
+     */
+    public static <T> int indexOf(List<T> source, T t) {
         return source.indexOf(t);
     }
 
-    // изменить размер листа на size
-    public static <T> List<? extends T> limit(List<? extends T> source, int size) {
+    /**
+     * Изменить размер листа на size
+     * @return List
+     */
+    public static <T> List<T> limit(List<T> source, int size) {
+        if (source.size()>size) return source;
         List<T> list = new ArrayList<>(size);
-        list.addAll(source);
+        for (int i = 0; i < size-source.size(); i++) list.add(null);
+        list.addAll(0, source);
         return list;
     }
 
-    // добавить элемент в список
+    /**
+     * Добавить элемент в список
+     * @param source List
+     * @param t T
+     * @param <T> T
+     */
     public static <T> void add(List<? super T> source, T t) {
         source.add(t);
     }
 
-    // добавить всё из первого диста во второй
+    /**
+     * Добавить всё из первого диста во второй
+     * @param source List
+     * @param destination List
+     * @param <T> T
+     */
     public static <T> void addAll(List<? extends T> source, List<? super T> destination) {
-        destination.addAll(source);
+        destination.retainAll(source);
     }
 
-    // удалить из первого листа все элементы второго
+    /**
+     * Удалить из первого листа все элементы второго
+     * @param removeFrom List
+     * @param c2 List
+     * @param <T> T
+     */
     public static <T> void removeAll(List<? super T> removeFrom, List<? extends T> c2) {
         removeFrom.removeAll(c2);
     }
 
-    //true если первый лист содержит все элементы второго
+    /**
+     * True если первый лист содержит все элементы второго
+     * @param c1 List
+     * @param c2 List
+     * @param <T> T
+     * @return boolean
+     */
     public static <T> boolean containsAll(List<? extends T> c1, List<? extends T> c2) {
         return c1.containsAll(c2);
     }
 
-    //true если первый лист содержит хотя-бы 1 второго
-    public static <T> boolean containsAny(List<T> c1, List<T> c2) {
+    /**
+     * True если первый лист содержит хотя-бы 1 второго
+     * @param c1 List
+     * @param c2 List
+     * @param <T> T
+     * @return boolean
+     */
+    public static <T> boolean containsAny(List<? extends T> c1, List<? extends T> c2) {
         for (T t : c2) {
-            if (c1.equals(t)) return true;
+            if (c1.contains(t)) return true;
         }
         return false;
     }
 
-    //Возвращает лист, содержащий элементы из входного листа в диапазоне от min до max.
+    /**
+     *  Возвращает лист, содержащий элементы из входного листа в диапазоне от min до max
+     * @param list List
+     * @param min T
+     * @param max T
+     * @param <T> T
+     * @return List
+     */
     public static <T extends Comparable<? super T>> List<T> range(List<T> list, T min, T max) {
-        Collections.sort(list);
-        return list.subList(list.indexOf(min), list.indexOf(max)+1);
+        return range(list, min, max, Comparator.naturalOrder());
     }
 
-    //Возвращает лист, содержащий элементы из входного листа в диапазоне от min до max (+ Comporator)
+    /**
+     * Возвращает лист, содержащий элементы из входного листа в диапазоне от min до max (+ Comporator)
+     * @param list List
+     * @param min T
+     * @param max T
+     * @param comparator Comparator
+     * @param <T> T
+     * @return List
+     */
     public static <T extends Comparable<? super T>> List<T> range
             (List<T> list, T min, T max, Comparator<T> comparator) {
-        list.sort(comparator);
-        return list.subList(list.indexOf(min), list.indexOf(max)+1);
+        if (comparator.compare(min,max)>=0) {
+            System.out.println("Элемент min не меньше max");
+            return list;
+        }
+        List<T> listResult = list.subList(list.indexOf(min), list.indexOf(max) + 1);
+        listResult.sort(comparator);
+        return listResult;
     }
 
     public static void main(String[] args) {
-        System.out.println(range(Arrays.asList(8,1,3,5,6, 4), 3, 6, Comparator.naturalOrder()));
+        List<Integer> list = newArrayList();
+        add(list, 8);
+        add(list, 1);
+        add(list, 3);
+        add(list, 5);
+        add(list, 6);
+        add(list, 4);
+        System.out.println("Индекс элемента 5 - "+indexOf(list, 5));
+        System.out.println("Размер листа - "+list.size());
+        List<Integer> limit = limit(list, 10);
+        System.out.println("Новый размер листа - "+limit.size());
+        System.out.println("Одинаковые ли два листа - "+containsAll(list, limit));
+        System.out.println("Есть ли одинаковые элементы в двух листах - "+containsAny(list, limit));
+        addAll(list, limit);
+        System.out.println(range(list, 3, 6));
+        System.out.println(range(list, 3, 6, Comparator.reverseOrder()));
     }
 }
 
