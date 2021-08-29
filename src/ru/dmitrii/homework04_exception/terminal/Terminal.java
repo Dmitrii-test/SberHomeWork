@@ -1,7 +1,7 @@
 package ru.dmitrii.homework04_exception.terminal;
 
-public interface Terminal {
-    public static void main(String[] args) {
+import java.io.BufferedReader;
 
-    }
+public interface Terminal {
+    int getNum(int quantity, int cate);
 }
