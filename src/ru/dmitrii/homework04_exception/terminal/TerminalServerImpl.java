@@ -70,7 +70,7 @@ public class TerminalServerImpl implements TerminalServer {
                 throw new AccountIsLockedException();
             } catch (AccountIsLockedException e) {
                 writer.write("Счёт забокирован");
-                writer.write("Оставщееся время блокировки: " + timer.get());
+                writer.write(String.format("Оставщееся время блокировки: %d", timer.get()));
                 return true;
             }
         return false;
