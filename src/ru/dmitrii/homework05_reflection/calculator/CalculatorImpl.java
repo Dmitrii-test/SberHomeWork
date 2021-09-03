@@ -4,7 +4,7 @@ public class CalculatorImpl implements Calculator{
 
     @Override
     public long factorial(int number) {
-        if (number == 1) return 1;
+        if (number == 1) return 1L;
         else return number* factorial(number-1);
     }
 

@@ -40,7 +40,9 @@ public class BeanUtils {
     }
 
     private static Method checkTo(Method[] methodsTo, Method f) throws IOException {
+
         for (Method t : methodsTo) {
+            if (t.getParameterTypes().length != 1) continue;
             if (t.getName().startsWith("set") && t.getName().substring(3).equals(f.getName().substring(3)) &&
                     t.getParameterTypes()[0].isAssignableFrom(f.getReturnType())) {
                 return t;
