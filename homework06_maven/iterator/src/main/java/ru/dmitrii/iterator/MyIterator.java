@@ -1,4 +1,4 @@
-package ru.dmitrii.homework06_maven.iterator;
+package ru.dmitrii.iterator;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -8,7 +8,8 @@ public class MyIterator <T> implements ListIterator <T> {
     private int pos;
 
     public MyIterator(List<T> list) {
-        this.list = list;
+        if (list==null) throw new NullPointerException("Лист не проинициализирован");
+        else this.list = list;
         this.pos = 0;
     }
 

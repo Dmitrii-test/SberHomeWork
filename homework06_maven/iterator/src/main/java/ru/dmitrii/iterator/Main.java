@@ -1,4 +1,4 @@
-package ru.dmitrii.homework06_maven.iterator;
+package ru.dmitrii.iterator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
