@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>homework06_maven</artifactId>
+    <artifactId>home-work06-maven</artifactId>
 
     <modules>
         <module>iterator</module>

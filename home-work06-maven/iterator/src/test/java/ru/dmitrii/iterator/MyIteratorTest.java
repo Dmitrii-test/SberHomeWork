@@ -45,7 +45,7 @@ public class MyIteratorTest {
 
     @Test
     public void hasPrevious() {
-        for (int i=0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             myIterator.next();
         }
         assertTrue(myIterator.hasPrevious());
@@ -57,7 +57,7 @@ public class MyIteratorTest {
 
     @Test
     public void previous() {
-        for (int i=0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             myIterator.next();
         }
         assertEquals(3, (int) myIterator.previous());
@@ -119,11 +119,21 @@ public class MyIteratorTest {
     @Test
     public void add() {
         myIterator.add(6);
-        assertEquals(6,(int)  myIterator.next());
-        assertEquals(1,(int)  myIterator.next());
+        assertEquals(6, (int) myIterator.next());
+        assertEquals(1, (int) myIterator.next());
         myIterator.add(9);
-        assertEquals(1,(int)  myIterator.previous());
+        assertEquals(1, (int) myIterator.previous());
         assertEquals(5, myIterator.list.size());
 
     }
+
+    @Test
+    public void mock() {
+        MyIterator iterator = Mockito.mock(MyIterator.class);
+        Mockito.when(iterator.next()).thenReturn(0);
+        Mockito.when(iterator.nextIndex()).thenReturn(10);
+        assertEquals(0, iterator.next());
+        assertEquals(10, iterator.nextIndex());
+    }
+
 }
