@@ -17,7 +17,6 @@ public class MyLoader extends URLClassLoader {
         try {
             if (c == null) c = findClass(name);
         } catch (ClassNotFoundException ignored) {}
-        if (c == null) c = super.findSystemClass(name);
         if (c == null) c = getParent().loadClass(name);
         return c;
     }
