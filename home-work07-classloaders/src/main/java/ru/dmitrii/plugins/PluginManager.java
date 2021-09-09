@@ -10,6 +10,7 @@ import java.util.*;
 public class PluginManager {
     private final String pluginRootDirectory;
     private final List<Plugin> pluginList = new ArrayList<>();
+    private MyLoader loader;
 
     public PluginManager(String pluginRootDirectory) {
         if (pluginRootDirectory == null) throw new NullPointerException("Пустрой путь");
@@ -19,6 +20,7 @@ public class PluginManager {
 
     /**
      * Метод загружающий классы из рут папки
+     *
      * @param pluginDir String
      * @return Plugin
      */
@@ -26,12 +28,6 @@ public class PluginManager {
         Class<?> aClass = null;
         Constructor<?> constructor = null;
         Plugin plugin = null;
-        MyLoader loader = null;
-        try {
-            loader = new MyLoader(new URL[]{pluginDir.getParentFile().toURI().toURL()});
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
         try {
             String name = pluginDir.getName().substring(0, pluginDir.getName().length() - 6);
             aClass = Objects.requireNonNull(loader).loadClass(name);
@@ -73,6 +69,7 @@ public class PluginManager {
         File path = new File(pluginRootDirectory);
         List<File> result = new ArrayList<>();
         File[] elements = new File(pluginRootDirectory).listFiles();
+        List<URL> urls = new ArrayList<>();
         if (path.isDirectory() && elements != null) {
             Queue<File> fileTree = new PriorityQueue<>();
             Collections.addAll(fileTree, elements);
@@ -80,10 +77,17 @@ public class PluginManager {
                 File currentFile = fileTree.remove();
                 if (currentFile.isDirectory()) {
                     Collections.addAll(fileTree, Objects.requireNonNull(currentFile.listFiles()));
-                } else if (currentFile.getName().endsWith(".class"))
+                } else if (currentFile.getName().endsWith(".class")) {
                     result.add(currentFile);
+                    try {
+                        urls.add(currentFile.getParentFile().toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+        loader = new MyLoader(urls.toArray(new URL[0]));
         return result;
     }
 
