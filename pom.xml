@@ -15,6 +15,7 @@
         <module>home-work04-exception</module>
         <module>home-work05-reflection</module>
         <module>home-work06-maven</module>
+        <module>home-work07-classloaders</module>
     </modules>
 
     <properties>

@@ -129,11 +129,12 @@ public class MyIteratorTest {
 
     @Test
     public void mock() {
-        MyIterator iterator = Mockito.mock(MyIterator.class);
+        MyIterator iterator = Mockito.spy(myIterator);
         Mockito.when(iterator.next()).thenReturn(0);
         Mockito.when(iterator.nextIndex()).thenReturn(10);
         assertEquals(0, iterator.next());
         assertEquals(10, iterator.nextIndex());
+        Mockito.verify(iterator,Mockito.times(2));
     }
 
 }
