@@ -12,6 +12,12 @@ public class EncryptedClassLoader extends ClassLoader {
         this.dir = dir;
     }
 
+    /**
+     * Переопределенный метод поска и загрузки класса
+     * @param name String
+     * @return Class<?>
+     * @throws ClassNotFoundException ClassNotFoundException
+     */
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         Class<?> result;
@@ -24,6 +30,12 @@ public class EncryptedClassLoader extends ClassLoader {
         return result;
     }
 
+    /**
+     * Считывание файла в массив
+     * @param file File
+     * @return byte[]
+     * @throws ClassNotFoundException ClassNotFoundException
+     */
     public byte[] loadFileAsBytes(File file) throws ClassNotFoundException {
         if (!file.exists()) throw new ClassNotFoundException("Файл не доступен");
         byte[] result = new byte[(int) file.length()];
@@ -32,7 +44,6 @@ public class EncryptedClassLoader extends ClassLoader {
             int j = 0;
             while((i=f.read())!=-1){
                 result[j++] = (byte) (i+key);
-//                result[j++] = (byte) (i);
             }
         } catch (IOException e) {
             System.out.println("Ошибка чтения файла " + e.getMessage());
@@ -40,6 +51,10 @@ public class EncryptedClassLoader extends ClassLoader {
         return result;
     }
 
+    /**
+     * Метод шифрования класса.
+     * @param name String
+     */
     public void cryptedClass (String name) {
         String pathname = dir + "/" + name + ".class";
         File out = new File(dir+"/" + name + ".crp");
