@@ -16,6 +16,7 @@
         <module>home-work05-reflection</module>
         <module>home-work06-maven</module>
         <module>home-work07-classloaders</module>
+        <module>home-work08-serialization</module>
     </modules>
 
     <properties>
