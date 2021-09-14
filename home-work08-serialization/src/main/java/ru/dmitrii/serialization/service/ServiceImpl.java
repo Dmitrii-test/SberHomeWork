@@ -19,10 +19,11 @@ public class ServiceImpl implements Service {
     public List<String> run(String item, double value, Date date) {
         List<String> strings = new ArrayList<>();
         for (int i = 0; i < value; i++) {
-            strings.add(item + i + date);
+            strings.add(item + " =" + i + " дата " + date);
         }
         return strings;
     }
+
 
     @Override
     public List<String> work(String item) {
