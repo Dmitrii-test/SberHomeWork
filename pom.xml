@@ -17,6 +17,7 @@
         <module>home-work06-maven</module>
         <module>home-work07-classloaders</module>
         <module>home-work08-serialization</module>
+        <module>home-work09-lambda</module>
     </modules>
 
     <properties>

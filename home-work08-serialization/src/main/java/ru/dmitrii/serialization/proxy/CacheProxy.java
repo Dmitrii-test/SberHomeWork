@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static ru.dmitrii.serialization.utils.FileHandler.*;
 
@@ -53,7 +54,6 @@ public class CacheProxy implements InvocationHandler {
                 listList = method.getAnnotation(Cache.class).listList();
                 zip = method.getAnnotation(Cache.class).zip();
                 identityBy = getClasses(method, args);
-                System.out.println(identityBy);
                 if (cacheType == CacheType.FILE) {
                     if (method.getReturnType() == List.class) return invokeFileList(method, args);
                     else return invokeFile(method, args);
@@ -78,16 +78,10 @@ public class CacheProxy implements InvocationHandler {
      * @return Class<?>
      */
     private List<?> getClasses(Method method, Object[] args) {
-        List<Object> objects = new ArrayList<>();
         Class<?>[] classes = method.getAnnotation(Cache.class).identityBy();
-        for (int i = 0; i < classes.length; i++) {
-            for (int j = 0; j < args.length; j++) {
-                if (classes[i] == args[j].getClass()) {
-                    objects.add(args[j]);
-                }
-            }
-        }
-        return objects;
+        List<Object> collect = Arrays.stream(args).filter(u -> Arrays.asList(classes).contains(u.getClass())).collect(Collectors.toList());
+        System.out.println("Определяющие обьекты: " + collect);
+        return collect;
     }
 
 
