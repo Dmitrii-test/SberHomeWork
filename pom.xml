@@ -18,6 +18,7 @@
         <module>home-work07-classloaders</module>
         <module>home-work08-serialization</module>
         <module>home-work09-lambda</module>
+        <module>home-work10-multi1</module>
     </modules>
 
     <properties>
