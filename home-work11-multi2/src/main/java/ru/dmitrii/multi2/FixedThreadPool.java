@@ -28,6 +28,7 @@ public class FixedThreadPool implements ThreadPool {
     @Override
     public void execute(Runnable runnable) {
         synchronized (queue) {
+            System.out.println("Добавлена задача в очередь " + runnable.toString());
             queue.add(runnable);
             queue.notify();
         }
