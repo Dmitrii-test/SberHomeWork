@@ -10,21 +10,41 @@ public class FixedThreadPool implements ThreadPool {
 
     public FixedThreadPool(int number) {
         this.number = number;
-        queue = new LinkedBlockingQueue();
+        queue = new LinkedBlockingQueue<>();
         threads = new Pool[number];
 
         for (int i = 0; i < number; i++) {
-            threads[i] = new Pool();
+            threads[i] = new Pool("Fixed-Thread-"+i);
         }
     }
 
+
+    /**
+     * Метод запускает потоки
+     */
     @Override
     public void start() {
         for (Pool pool : threads) {
             pool.start();
         }
+        System.out.println("Потоки запущены");
     }
 
+    /**
+     * Метод останавливает все потоки
+     */
+    public void stop() {
+        System.out.println("Остановка потоков");
+        for (Pool pool : threads) {
+            pool.interrupt();
+        }
+    }
+
+    /**
+     * Метод складывает задание в очередь
+     *
+     * @param runnable Runnable
+     */
     @Override
     public void execute(Runnable runnable) {
         synchronized (queue) {
@@ -34,22 +54,32 @@ public class FixedThreadPool implements ThreadPool {
         }
     }
 
+    /**
+     * Вложенный класс реализующий потоки
+     */
     private class Pool extends Thread {
+
+        public Pool(String name) {
+            super(name);
+        }
+
+        @Override
         public void run() {
             Runnable task;
-            while (true) {
-                synchronized (queue) {
-                    while (queue.isEmpty()) {
-                        try {
+            while (!isInterrupted()) {
+                try {
+                    synchronized (queue) {
+                        while (queue.isEmpty()) {
                             queue.wait();
-                        } catch (InterruptedException e) {
-                            System.out.println("Ошибка ожидания: " + e.getMessage());
                         }
+                        task = queue.poll();
                     }
-                    task = queue.poll();
+                    task.run();
+                } catch (InterruptedException e) {
+                    interrupt();
                 }
-                task.run();
             }
+            System.out.printf("Поток %s остановлен%n", Thread.currentThread().getName());
         }
     }
 }

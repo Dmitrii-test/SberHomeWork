@@ -7,28 +7,61 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static java.lang.Thread.State.RUNNABLE;
 import static java.lang.Thread.State.WAITING;
 
-public class ScalableThreadPool implements ThreadPool{
+public class ScalableThreadPool implements ThreadPool {
     private final int min;
     private final int max;
     private final List<Pool> threads;
     private final LinkedBlockingQueue<Runnable> queue;
+    private int count;
+    private final Thread demon;
 
     public ScalableThreadPool(int min, int max) {
         this.min = min;
         this.max = max;
         queue = new LinkedBlockingQueue<>();
         threads = new ArrayList<>();
-
         for (int i = 0; i < min; i++) {
-            threads.add(new Pool());
+            count = i;
+            threads.add(new Pool("Scalable-Thread-" + i));
         }
+        demon = new Thread(demonRun());
     }
 
+    private Runnable demonRun() {
+        return () -> {
+            while (!demon.isInterrupted()) {
+                if (!queue.isEmpty()) addThread();
+                else removeThreads();
+            }
+            System.out.println("Демон остановлен");
+        };
+    }
+
+    /**
+     * Метод запускает потоки
+     */
     @Override
     public void start() {
+        demon.start();
         threads.forEach(Pool::start);
     }
 
+
+    /**
+     * Метод останавливает все потоки
+     */
+    public void stop() {
+        demon.interrupt();
+        System.out.println("Остановка потоков");
+        threads.forEach(Pool::interrupt);
+    }
+
+
+    /**
+     * Метод складывает задание в очередь
+     *
+     * @param runnable Runnable
+     */
     @Override
     public void execute(Runnable runnable) {
         synchronized (queue) {
@@ -38,52 +71,72 @@ public class ScalableThreadPool implements ThreadPool{
         }
     }
 
-    public boolean workThreads () {
-        for (Thread thread : threads) {
-            if (thread.getState().equals(RUNNABLE)) return true;
-        }
-        return false;
+    /**
+     * Метод проверяет есть ли потоки в работе
+     *
+     * @return boolean
+     */
+    public boolean workThreads() {
+            for (Pool pool : threads) {
+                if (pool.getState().equals(RUNNABLE)) return true;
+            }
+            return false;
     }
 
-    public void reduceThreads () {
-        for (Thread thread : threads) {
-            if (thread.getState().equals(WAITING)) {
-                threads.remove(thread);
-                System.out.println("Удалён лишний поток");
-                return;
+    /**
+     * Метод удаления лишних потоков
+     */
+    public void removeThreads() {
+        if (threads.size() > min) {
+            for (Pool pool : threads) {
+                if (pool.getState().equals(WAITING)) {
+                    threads.remove(pool);
+                    System.out.println("Удалён лишний поток " + pool.getName());
+                    return;
+                }
             }
         }
     }
 
+    /**
+     * Метод добавления потоков
+     */
+    private void addThread() {
+        if (workThreads() && threads.size() < max) {
+            Pool pool = new Pool("Scalable-Thread-" + ++count);
+            threads.add(pool);
+            pool.start();
+            System.out.println("Добавлен новый поток " + pool.getName());
+        }
+    }
 
 
+    /**
+     * Вложенный класс реализующий потоки
+     */
     private class Pool extends Thread {
+
+        public Pool(String name) {
+            super(name);
+        }
+
+        @Override
         public void run() {
             Runnable task;
-            while (true) {
-                synchronized (queue) {
-                    while (queue.isEmpty()) {
-                        synchronized (threads) {
-                            if (threads.size() > min) reduceThreads();
-                        }
-                        try {
+            while (!isInterrupted()) {
+                try {
+                    synchronized (queue) {
+                        while (queue.isEmpty()) {
                             queue.wait();
-                        } catch (InterruptedException e) {
-                            System.out.println("Ошибка ожидания: " + e.getMessage());
                         }
+                        task = queue.poll();
                     }
-                    task = queue.poll();
+                    task.run();
+                } catch (InterruptedException e) {
+                    interrupt();
                 }
-                synchronized (threads) {
-                    if (!queue.isEmpty() && workThreads() && threads.size() < max) {
-                        Pool pool = new Pool();
-                        threads.add(pool);
-                        pool.start();
-                        System.out.println("Добавлен новый поток");
-                    }
-                }
-                task.run();
             }
+            System.out.printf("Поток %s остановлен%n", Thread.currentThread().getName());
         }
     }
 }
