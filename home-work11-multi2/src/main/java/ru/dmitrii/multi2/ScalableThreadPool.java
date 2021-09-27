@@ -13,7 +13,7 @@ public class ScalableThreadPool implements ThreadPool {
     private final List<Pool> threads;
     private final LinkedBlockingQueue<Runnable> queue;
     private int count;
-    private final Thread demon;
+    private final Thread daemon;
 
     public ScalableThreadPool(int min, int max) {
         this.min = min;
@@ -24,12 +24,12 @@ public class ScalableThreadPool implements ThreadPool {
             count = i;
             threads.add(new Pool("Scalable-Thread-" + i));
         }
-        demon = new Thread(demonRun());
+        daemon = new Thread(daemonRun());
     }
 
-    private Runnable demonRun() {
+    private Runnable daemonRun() {
         return () -> {
-            while (!demon.isInterrupted()) {
+            while (!daemon.isInterrupted()) {
                 if (!queue.isEmpty()) addThread();
                 else removeThreads();
             }
@@ -42,7 +42,7 @@ public class ScalableThreadPool implements ThreadPool {
      */
     @Override
     public void start() {
-        demon.start();
+        daemon.start();
         threads.forEach(Pool::start);
     }
 
@@ -51,7 +51,7 @@ public class ScalableThreadPool implements ThreadPool {
      * Метод останавливает все потоки
      */
     public void stop() {
-        demon.interrupt();
+        daemon.interrupt();
         System.out.println("Остановка потоков");
         threads.forEach(Pool::interrupt);
     }
@@ -77,10 +77,10 @@ public class ScalableThreadPool implements ThreadPool {
      * @return boolean
      */
     public boolean workThreads() {
-            for (Pool pool : threads) {
-                if (pool.getState().equals(RUNNABLE)) return true;
-            }
-            return false;
+        for (Pool pool : threads) {
+            if (pool.getState().equals(RUNNABLE)) return true;
+        }
+        return false;
     }
 
     /**
@@ -90,6 +90,7 @@ public class ScalableThreadPool implements ThreadPool {
         if (threads.size() > min) {
             for (Pool pool : threads) {
                 if (pool.getState().equals(WAITING)) {
+                    pool.interrupt();
                     threads.remove(pool);
                     System.out.println("Удалён лишний поток " + pool.getName());
                     return;
