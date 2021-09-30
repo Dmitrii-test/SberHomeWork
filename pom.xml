@@ -21,6 +21,7 @@
         <module>home-work10-multi1</module>
         <module>home-work11-multi2</module>
         <module>home-work12-jmm</module>
+        <module>home-work13-jit</module>
     </modules>
 
     <properties>
