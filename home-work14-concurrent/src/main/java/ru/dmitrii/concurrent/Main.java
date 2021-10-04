@@ -13,13 +13,17 @@ public class Main {
         CacheProxy cacheProxy = new CacheProxy();
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         Service service = (Service) cacheProxy.cache(new ServiceImpl());
-        Callable<Long> doubleCallable = () -> service.factorial("work", 12);
         try {
             List<Future<Long>> futures = new ArrayList<>();
-            for (int i = 0; i <10 ; i++) {
-                futures.add(executorService.submit(doubleCallable));
+            for (int i = 1; i <15 ; i++) {
+                int finalI = i;
+                futures.add(executorService.submit(() -> service.factorial("work", finalI)));
+                futures.add(executorService.submit(() -> service.factorial("work", finalI)));
+                futures.add(executorService.submit(() -> service.factorial("work", finalI)));
+                futures.add(executorService.submit(() -> service.factorial("work", finalI)));
+                futures.add(executorService.submit(() -> service.factorial("work", finalI)));
             }
-            Thread.sleep(100);
+            Thread.sleep(50);
             futures.stream().filter(Future::isDone).forEach(n -> {
                 try {
                     Long aLong = n.get();

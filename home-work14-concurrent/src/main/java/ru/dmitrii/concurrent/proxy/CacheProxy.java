@@ -9,7 +9,6 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
 import static ru.dmitrii.concurrent.utils.FileHandler.*;
 
 public class CacheProxy implements InvocationHandler {
@@ -61,7 +60,7 @@ public class CacheProxy implements InvocationHandler {
                 }
                 if (cacheType == CacheType.IN_MEMORY) {
                     if (method.getReturnType() == List.class) return invokeRamList(method, args);
-                    else return invokeRam(method, args);
+                    else return invokeRam(method, args).get(0);
                 }
             }
         } catch (InvocationTargetException | IllegalAccessException e) {
@@ -92,18 +91,23 @@ public class CacheProxy implements InvocationHandler {
      * @param method Method
      * @param args   Object[]
      * @return Object
-     * @throws InvocationTargetException InvocationTargetException
-     * @throws IllegalAccessException    IllegalAccessException
+
      */
-    private Object invokeRam(Method method, Object[] args)
-            throws InvocationTargetException, IllegalAccessException {
-        if (cacheMap.containsKey(identityBy)) {
-            System.out.println("Ответ взят из кэша");
-            return cacheMap.get(identityBy).get(0);
-        }
-        Object rezult = method.invoke(delegate, args);
-        cacheMap.put(identityBy, Collections.singletonList(rezult));
-        return rezult;
+    private List<?> invokeRam(Method method, Object[] args) {
+        return cacheMap.compute(identityBy, (key, value) -> {
+            if (value != null) {
+                System.out.println(Thread.currentThread().getName() + " ответ взял из кэша");
+                return value;
+            }
+            Object rezult = null;
+            try {
+                rezult = method.invoke(delegate, args);
+                System.out.println(Thread.currentThread().getName() + " ответ вычислил");
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                System.out.println("Ошибка вызова метода " + e.getMessage());
+            }
+            return Collections.singletonList(rezult);
+        });
     }
 
     /**
@@ -112,19 +116,24 @@ public class CacheProxy implements InvocationHandler {
      * @param method Method
      * @param args   Object[]
      * @return List<?>
-     * @throws InvocationTargetException InvocationTargetException
-     * @throws IllegalAccessException    IllegalAccessException
+
      */
-    private List<?> invokeRamList(Method method, Object[] args)
-            throws InvocationTargetException, IllegalAccessException {
-        if (cacheMap.containsKey(identityBy)) {
-            System.out.println("Ответ взят из кэша Листа");
-            return cacheMap.get(identityBy);
-        }
-        List<?> rezult = (List<?>) method.invoke(delegate, args);
-        if (listList != 0 && rezult.size() > listList) rezult = rezult.subList(0, listList - 1);
-        cacheMap.put(identityBy, rezult);
-        return rezult;
+    private List<?> invokeRamList(Method method, Object[] args) {
+        return cacheMap.compute(identityBy, (key, value) -> {
+            if (value != null) {
+                System.out.println(Thread.currentThread().getName() + " ответ взял из кэша");
+                return value;
+            }
+            List<?> rezult = null;
+            try {
+                rezult = (List<?>) method.invoke(delegate, args);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                System.out.println("Ошибка вызова метода " + e.getMessage());
+            }
+            if (listList != 0 && Objects.requireNonNull(rezult).size() > listList)
+                rezult = rezult.subList(0, listList - 1);
+            return rezult;
+        });
     }
 
     /**
@@ -179,9 +188,10 @@ public class CacheProxy implements InvocationHandler {
      * @param args   Object[]
      * @return List<?>
      * @throws InvocationTargetException InvocationTargetException
-     * @throws IllegalAccessException IllegalAccessException
+     * @throws IllegalAccessException    IllegalAccessException
      */
-    private List<?> invokeFileList(Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+    private List<?> invokeFileList(Method method, Object[] args) throws
+            InvocationTargetException, IllegalAccessException {
         File file = checkFile();
         Map<List<?>, List<?>> map = new HashMap<>();
         if (file.length() > 0) map = readFileList(file, zip);

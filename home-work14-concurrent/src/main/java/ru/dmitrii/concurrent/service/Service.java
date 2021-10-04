@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface Service {
 
-    @Cache(cacheType = CacheType.IN_MEMORY)
+    @Cache(cacheType = CacheType.IN_MEMORY, identityBy = {Integer.class})
     Long factorial(String string, int i);
 
     @Cache(cacheType = CacheType.FILE, fileNamePrefix = "./data", zip = false, identityBy = {String.class, double.class})
