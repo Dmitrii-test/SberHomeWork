@@ -7,7 +7,7 @@ public class Main {
         Callable<Integer> callable = new Callable<Integer>() {
             @Override
             public Integer call() throws Exception {
-                return 10 / 0;
+                return 10 / 2;
             }
         };
         Task<Integer> task = new Task(callable);

@@ -6,7 +6,6 @@ public class Task<T> {
 
     private final Callable<? extends T> callable;
     private volatile T result;
-    private volatile boolean key = false;
     private volatile CallException callException;
 
 
@@ -16,14 +15,13 @@ public class Task<T> {
 
     public T get() {
         synchronized (callable) {
-            if (key) {
-                try {
-                    callable.wait();
-                } catch (InterruptedException e) {
-                    System.out.println("Ошибка ожидания " + e.getMessage());
-                }
+            try {
+                System.out.println(Thread.currentThread().getName() + " are waiting");
+                callable.wait(10);
+                System.out.println(Thread.currentThread().getName() + " run");
+            } catch (InterruptedException e) {
+                System.out.println("Ошибка ожидания " + e.getMessage());
             }
-            key = true;
             if (callException != null) {
                 System.out.println("Ошибка из памяти");
                 reset();
@@ -48,7 +46,6 @@ public class Task<T> {
     }
 
     private void reset() {
-        key = false;
         callable.notify();
     }
 
