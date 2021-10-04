@@ -99,7 +99,7 @@ public class CacheProxy implements InvocationHandler {
             throws InvocationTargetException, IllegalAccessException {
         if (cacheMap.containsKey(identityBy)) {
             System.out.println("Ответ взят из кэша");
-            return cacheMap.get(identityBy);
+            return cacheMap.get(identityBy).get(0);
         }
         Object rezult = method.invoke(delegate, args);
         cacheMap.put(identityBy, Collections.singletonList(rezult));
