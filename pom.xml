@@ -23,6 +23,7 @@
         <module>home-work12-jmm</module>
         <module>home-work13-jit</module>
         <module>home-work14-concurrent</module>
+        <module>home-work15-gof</module>
     </modules>
 
     <properties>
