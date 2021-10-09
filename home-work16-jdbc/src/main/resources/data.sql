@@ -1,0 +1,7 @@
+
+set schema public;
+
+CREATE TABLE IF NOT EXISTS FIBONACHI (
+    id INT PRIMARY KEY NOT NULL,
+    result LONG NOT NULL
+);

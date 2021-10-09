@@ -24,6 +24,7 @@
         <module>home-work13-jit</module>
         <module>home-work14-concurrent</module>
         <module>home-work15-gof</module>
+        <module>home-work16-jdbc</module>
     </modules>
 
     <properties>
