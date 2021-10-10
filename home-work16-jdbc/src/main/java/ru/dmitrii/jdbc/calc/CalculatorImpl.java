@@ -1,7 +1,8 @@
-package ru.dmitrii.jdbc.inter;
+package ru.dmitrii.jdbc.calc;
 
 public class CalculatorImpl implements Calculator{
-    @Cachable(H2DB.class)
+
+    @Override
     public long fibonachi(int n) {
         long a = 0;
         long b = 1;

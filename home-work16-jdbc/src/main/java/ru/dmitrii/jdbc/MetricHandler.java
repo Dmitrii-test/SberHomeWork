@@ -36,11 +36,17 @@ public class MetricHandler implements InvocationHandler {
         return null;
     }
 
+    /**
+     * Метод проверяющий есть ли значение в БД
+     * @param method Method
+     * @param args Object[]
+     * @return Object
+     */
     private Object invokeDB(Method method, Object[] args) {
         DataSource.createDb();
         Long fibonacyId = DataSource.findFibonacyId((Integer) args[0]);
         if (fibonacyId != -1) {
-            System.out.println("Результат взят из базы");
+            System.out.println("Результат взят из БД");
             return fibonacyId;
         }
         Long invoke = null;
@@ -49,7 +55,7 @@ public class MetricHandler implements InvocationHandler {
             DataSource.createPerson((Integer) args[0], invoke);
             return invoke;
         } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            System.out.println("Ошибка вызова метода " + e.getMessage());
         }
         return invoke;
     }
