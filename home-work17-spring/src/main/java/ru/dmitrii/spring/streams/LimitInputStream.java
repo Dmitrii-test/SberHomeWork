@@ -3,9 +3,12 @@ package ru.dmitrii.spring.streams;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Класс обертка стрима
+ */
 public class LimitInputStream extends InputStream {
 
-    private InputStream inputStream;
+    private final InputStream inputStream;
     private final Limiter limiter;
 
     public LimitInputStream(InputStream inputStream, Limiter limiter) {

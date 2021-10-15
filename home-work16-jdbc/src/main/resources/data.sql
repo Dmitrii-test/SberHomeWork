@@ -1,4 +1,3 @@
-
 set schema public;
 
 CREATE TABLE IF NOT EXISTS FIBONACHI (

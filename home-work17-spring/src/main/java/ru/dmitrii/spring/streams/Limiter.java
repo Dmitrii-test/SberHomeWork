@@ -1,29 +1,33 @@
 package ru.dmitrii.spring.streams;
 
-import org.springframework.stereotype.Component;
-
+/**
+ * Класс ограничитель скачивания
+ */
 public class Limiter {
     private static final Long KB = 1024L;
     private static final Long CHUNK_LENGTH = 1024 * 1024L;
-    private int bytesWillBeSentOrReceive = 0;
-    private long lastPieceSentOrReceiveTick = System.nanoTime();
+    private int bytesBeSent = 0;
+    private long lastPiece = System.nanoTime();
     private int maxRate = 1024;
-    private long timeCostPerChunk = (1000000000L * CHUNK_LENGTH) / (this.maxRate * KB);
+    private long timeCostChunk = (1000000000L * CHUNK_LENGTH) / (this.maxRate * KB);
 
     public Limiter(int maxRate) {
         this.setMaxRate(maxRate);
     }
 
-
-    public void setMaxRate(int maxRate) {
-        if (maxRate < 0) {
-            throw new IllegalArgumentException("maxRate can not less than 0");
+    /**
+     * Задать ограничение
+     * @param maxCapacity int
+     */
+    public void setMaxRate(int maxCapacity) {
+        if (maxCapacity < 0) {
+            throw new IllegalArgumentException("maxCapacity can not less than 0");
         }
-        this.maxRate = maxRate;
-        if (maxRate == 0) {
-            this.timeCostPerChunk = 0;
+        this.maxRate = maxCapacity;
+        if (maxCapacity == 0) {
+            this.timeCostChunk = 0;
         } else {
-            this.timeCostPerChunk = (1000000000L * CHUNK_LENGTH) / (this.maxRate * KB);
+            this.timeCostChunk = (1000000000L * CHUNK_LENGTH) / (this.maxRate * KB);
         }
     }
 
@@ -32,20 +36,20 @@ public class Limiter {
     }
 
     public synchronized void limitNextBytes(int len) {
-        this.bytesWillBeSentOrReceive += len;
-        while (this.bytesWillBeSentOrReceive > CHUNK_LENGTH) {
+        this.bytesBeSent += len;
+        while (this.bytesBeSent > CHUNK_LENGTH) {
             long nowTick = System.nanoTime();
-            long passTime = nowTick - this.lastPieceSentOrReceiveTick;
-            long missedTime = this.timeCostPerChunk - passTime;
+            long passTime = nowTick - this.lastPiece;
+            long missedTime = this.timeCostChunk - passTime;
             if (missedTime > 0) {
                 try {
                     Thread.sleep(missedTime / 1000000, (int) (missedTime % 1000000));
                 } catch (InterruptedException e) {
-                    System.out.println("Ошибка ожыдания");
+                    System.out.println("Ошибка ожидания");
                 }
             }
-            this.bytesWillBeSentOrReceive -= CHUNK_LENGTH;
-            this.lastPieceSentOrReceiveTick = nowTick + (missedTime > 0 ? missedTime : 0);
+            this.bytesBeSent -= CHUNK_LENGTH;
+            this.lastPiece = nowTick + (missedTime > 0 ? missedTime : 0);
         }
     }
 }

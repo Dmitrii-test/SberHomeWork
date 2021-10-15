@@ -35,28 +35,41 @@ public class DataSource {
 
     /**
      * Находит результат вычисления в базе по id
+     *
      * @param id int
      * @return Long
      */
     public static Long findFibonacyId(int id) {
         try (PreparedStatement statement = DataSource.connection()
-                .prepareStatement("select * from FIBONACHI p where p.id=?")) {
+                .prepareStatement("select count(*) from FIBONACHI WHERE id=?")) {
             statement.setInt(1, id);
             statement.execute();
-
             ResultSet resultSet = statement.getResultSet();
-            if (resultSet.next()) {
-                return resultSet.getLong("result");
+            resultSet.next();
+            int count = resultSet.getInt("count(*)");
+            if (count != 0) {
+                try (PreparedStatement stat = DataSource.connection()
+                        .prepareStatement("select result from FIBONACHI where id=?")) {
+                    stat.setInt(1, id);
+                    stat.execute();
+                    ResultSet result = stat.getResultSet();
+                    if (result.next()) {
+                        return resultSet.getLong(1);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
         return (long) -1;
     }
 
     /**
      * Вставить значение вычисления в базу
-      * @param id int
+     *
+     * @param id     int
      * @param result long
      */
     public static void createPerson(int id, long result) {
