@@ -5,11 +5,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 @Configuration
@@ -25,8 +30,38 @@ public class DataConfiguration {
         return new JdbcTemplate(dataSource);
     }
 
+    @Bean
+    public SimpleJdbcInsert simpleJdbcInsertRecipe(DataSource dataSource) {
+        return new SimpleJdbcInsert(dataSource)
+                .withTableName("RECIPES")
+                .usingColumns("name")
+                .usingGeneratedKeyColumns("id");
+    }
+
+    @Bean
+    public SimpleJdbcInsert simpleJdbcInsertIngredient(DataSource dataSource) {
+        return new SimpleJdbcInsert(dataSource)
+                .withTableName("INGREDIENTS")
+                .usingColumns("name")
+                .usingGeneratedKeyColumns("id");
+    }
+
+    @Bean
+    public BufferedReader bufferedReader() {
+        return new BufferedReader(new InputStreamReader(System.in));
+    }
+
     @PostConstruct
     public void makeScript() throws SQLException {
         ScriptUtils.executeSqlScript(dataSource().getConnection(), new ClassPathResource("/data.sql"));
+    }
+
+    @PreDestroy
+    public void clear () {
+        try {
+            bufferedReader().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

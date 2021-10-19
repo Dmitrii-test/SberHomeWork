@@ -6,8 +6,7 @@ import ru.dmitrii.spring.jdbc.dao.DishDAO;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -15,14 +14,36 @@ public class Main {
         context.register(DataConfiguration.class);
         context.refresh();
         DishDAO dishDAO = context.getBean(DishDAO.class);
-        String recipe;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            System.out.println("Введите название рецепта: ");
-            recipe = reader.readLine();
-            List<String> showRecept = dishDAO.showRecept(recipe);
-            System.out.printf("Рецепт %s : %n",recipe);
-            System.out.println("--------------");
-            showRecept.forEach(System.out::println);
+        BufferedReader bufferedReader = context.getBean(BufferedReader.class);
+        String operations;
+        try {
+            while (true) {
+                System.out.println("Введите название операции");
+                System.out.println("ADD - добавить рецепт, REMOVE - удалить рецепт, SHOW - показать рецепт," +
+                        "EXIT - для выхода :");
+                operations = bufferedReader.readLine().toUpperCase();
+                switch (operations) {
+                    case ("ADD"):
+                        System.out.println("Введите название рецепта для добавления: ");
+                        String a = bufferedReader.readLine();
+                        dishDAO.addDish(a);
+                        break;
+                    case ("REMOVE"):
+                        System.out.println("Введите название рецепта для удаления: ");
+                        String s = bufferedReader.readLine();
+                        dishDAO.delete(s);
+                        break;
+                    case ("SHOW"):
+                        System.out.println("Введите название рецепта для показа: ");
+                        String o = bufferedReader.readLine();
+                        dishDAO.showRecept(o);
+                        break;
+                    case ("EXIT"):
+                        return;
+                    default:
+                        System.out.println("Не правильная операция");
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
