@@ -31,16 +31,16 @@ public class DataConfiguration {
     }
 
     @Bean
-    public SimpleJdbcInsert simpleJdbcInsertRecipe(DataSource dataSource) {
-        return new SimpleJdbcInsert(dataSource)
+    public SimpleJdbcInsert simpleJdbcInsertRecipe(JdbcTemplate jdbcTemplate) {
+        return new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("RECIPES")
                 .usingColumns("name")
                 .usingGeneratedKeyColumns("id");
     }
 
     @Bean
-    public SimpleJdbcInsert simpleJdbcInsertIngredient(DataSource dataSource) {
-        return new SimpleJdbcInsert(dataSource)
+    public SimpleJdbcInsert simpleJdbcInsertIngredient(JdbcTemplate jdbcTemplate) {
+        return new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("INGREDIENTS")
                 .usingColumns("name")
                 .usingGeneratedKeyColumns("id");

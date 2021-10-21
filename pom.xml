@@ -27,6 +27,7 @@
         <module>home-work16-jdbc</module>
         <module>home-work17-spring</module>
         <module>home-work18-spring-jdbc</module>
+        <module>home-work19-hibernate</module>
     </modules>
 
     <properties>
