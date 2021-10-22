@@ -3,42 +3,49 @@ package ru.dmitrii.hibernate.dao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.stereotype.Component;
-import ru.dmitrii.hibernate.model.Ingredient;
+import org.springframework.stereotype.Service;
+import ru.dmitrii.hibernate.model.Dish;
+import ru.dmitrii.hibernate.model.Recipe;
 
-@Component
-public class IngredientsDAO {
+@Service
+public class DishDAO {
 
     final SessionFactory sessionFactory;
 
-    public IngredientsDAO() {
+    public DishDAO() {
         this.sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
-    public Ingredient findById(int id) {
-        return sessionFactory.openSession().get(Ingredient.class, id);
+    public Dish findById(int id) {
+        return sessionFactory.openSession().get(Dish.class, id);
     }
-    public void save(Ingredient ingredients) {
+    public void save(Dish dish) {
         Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
-        session.save(ingredients);
+        session.save(dish);
         tx1.commit();
         session.close();
     }
 
-    public void update(Ingredient ingredients) {
+    public void update(Dish dish) {
         Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
-        session.update(ingredients);
+        session.update(dish);
         tx1.commit();
         session.close();
     }
 
-    public void delete(Ingredient ingredients) {
+    public void delete(Dish dish) {
         Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
-        session.delete(ingredients);
+        session.delete(dish);
         tx1.commit();
         session.close();
     }
+
+//
+//    public List<Recipe> findAll() {
+//        List<Recipe> recipe = (List<Recipe>) sessionFactory.openSession().createQuery("From Recipe").list();
+//        return recipe;
+//    }
 }

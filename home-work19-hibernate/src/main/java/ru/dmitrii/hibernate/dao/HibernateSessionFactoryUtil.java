@@ -4,8 +4,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.springframework.context.annotation.Bean;
-import ru.dmitrii.hibernate.model.Ingredients;
-import ru.dmitrii.hibernate.model.Recipes;
+import ru.dmitrii.hibernate.model.Dish;
+import ru.dmitrii.hibernate.model.Ingredient;
+import ru.dmitrii.hibernate.model.Recipe;
 
 
 public class HibernateSessionFactoryUtil {
@@ -14,13 +15,14 @@ public class HibernateSessionFactoryUtil {
 
     private HibernateSessionFactoryUtil() {}
 
-    @Bean
+
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration().configure();
-                configuration.addAnnotatedClass(Ingredients.class);
-                configuration.addAnnotatedClass(Recipes.class);
+                configuration.addAnnotatedClass(Ingredient.class);
+                configuration.addAnnotatedClass(Recipe.class);
+                configuration.addAnnotatedClass(Dish.class);
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 

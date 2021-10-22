@@ -3,52 +3,52 @@ package ru.dmitrii.hibernate.dao;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.stereotype.Repository;
-import ru.dmitrii.hibernate.model.Ingredients;
-import ru.dmitrii.hibernate.model.Recipes;
+import org.springframework.stereotype.Service;
+import ru.dmitrii.hibernate.model.Ingredient;
+import ru.dmitrii.hibernate.model.Recipe;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
-@Repository("recipesDAO")
+
+@Service
 public class RecipesDAO {
 
+    final SessionFactory sessionFactory;
 
-    final EntityManager entityManager;
-    final SessionFactory getSessionFactory;
-
-    public RecipesDAO(EntityManager entityManager, SessionFactory getSessionFactory) {
-        this.entityManager = entityManager;
-        this.getSessionFactory = getSessionFactory;
+    public RecipesDAO() {
+        this.sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
-    public Recipes findById(int id) {
-        return getSessionFactory.openSession().get(Recipes.class, id);
+    public Recipe findById(int id) {
+        return sessionFactory.openSession().get(Recipe.class, id);
     }
-    public void save(Recipes recipes) {
-        Session session = getSessionFactory.openSession();
+    public void save(Recipe recipes) {
+        Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
         session.save(recipes);
         tx1.commit();
         session.close();
     }
 
-    public void update(Recipes recipes) {
-        Session session = getSessionFactory.openSession();
+    public void update(Recipe recipes) {
+        Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
         session.update(recipes);
         tx1.commit();
         session.close();
     }
 
-    public void delete(Recipes recipes) {
-        Session session = getSessionFactory.openSession();
+    public void delete(Recipe recipes) {
+        Session session = sessionFactory.openSession();
         Transaction tx1 = session.beginTransaction();
         session.delete(recipes);
         tx1.commit();
         session.close();
     }
 
-    public Ingredients findIngredientsById(int id) {
-        return getSessionFactory.openSession().get(Ingredients.class, id);
+    public List<Recipe> findAll() {
+        List<Recipe> recipe = (List<Recipe>) sessionFactory.openSession().createQuery("From Recipe").list();
+        return recipe;
     }
+
 }
