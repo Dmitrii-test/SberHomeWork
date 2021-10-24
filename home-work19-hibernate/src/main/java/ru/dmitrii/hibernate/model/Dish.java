@@ -28,6 +28,10 @@ public class Dish {
     public Dish() {
     }
 
+    public Dish(Recipe recipe) {
+        this.recipe = recipe;
+    }
+
     public Dish(Recipe recipe, Ingredient ingredient, int weight) {
         this.recipe = recipe;
         this.ingredient = ingredient;
