@@ -1,0 +1,15 @@
+version: "1"
+
+services:
+  calendar:
+    image: "registry.sigma.sbrf.ru/pprb-dev/ci00682829_cdm_dev/calendar:latest"
+    ports:
+      - 8080:8080
+  welcomer:
+    image: "registry.sigma.sbrf.ru/pprb-dev/ci00682829_cdm_dev/welcomer:latest"
+    ports:
+      - 8081:8081
+    environment:
+      RUN_ARG: "--calendar.url=http://calendar:8080"
+    depends_on:
+      - calendar
