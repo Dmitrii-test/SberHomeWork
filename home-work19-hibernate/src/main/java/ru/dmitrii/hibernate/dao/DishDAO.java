@@ -43,7 +43,7 @@ public class DishDAO {
                 "    ON Dish.ingredient.id = Ingredient.id WHERE Dish.recipe.id = :byRecipe");
         query.setParameter("byRecipe", byRecipe);
         return query.getHints();
-//     return sessionFactory.openSession().get(Dish.class, id);
+//     return sessionFactory.openSession().get(Dish.class, id);ц    
     }
 
     @Transient
