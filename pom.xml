@@ -31,6 +31,7 @@
         <module>home-work20-spring-mvc</module>
         <module>home-work21-docker</module>
         <module>home-work22-autotests</module>
+        <module>home-work23-selenium</module>
     </modules>
 
     <properties>
