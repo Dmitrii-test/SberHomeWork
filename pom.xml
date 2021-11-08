@@ -32,6 +32,8 @@
         <module>home-work21-docker</module>
         <module>home-work22-autotests</module>
         <module>home-work23-selenium</module>
+        <module>home-work24-assured</module>
+        <module>home-work24-assured</module>
     </modules>
 
     <properties>
